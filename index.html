@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <!-- <link rel="manifest" href="manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="PWA Workshop">
+    <meta name="apple-mobile-web-app-title" content="PWA Workshop">
+    <meta name="msapplication-starturl" content="/index.html"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+    <link rel="stylesheet"
+        href="https://maxst.icons8.com/vue-static/landings/line-awesome/font-awesome-line-awesome/css/all.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <link rel="stylesheet" href="css/index.css" />
+
+    <link rel="shortcut icon" href="public/icons/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="public/icons/favicon.ico" type="image/x-icon">
+
+    <title>ConectCon</title>
+</head>
+
+<body>
+
+    <header class="container">
+        <form action="" id="form">
+            <input type="text" id="msg" autocomplete="off" autofocus placeholder="Digite uma mensagem a enviar" />
+            <button type="submit" class="btn">Enviar</button>
+        </form>
+
+        <ul id="mensagens" class="collection with-header"></ul>
+
+        <div id="status"></div>
+
+    </header>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- <script async src="https://cdn.jsdelivr.net/npm/pwacompat@2.0.8/pwacompat.min.js"
+        integrity="sha384-uONtBTCBzHKF84F6XvyC8S0gL8HTkAPeCyBNvfLfsqHh+Kd6s/kaS4BdmNQ5ktp1"
+        crossorigin="anonymous"></script>
+    <script type="module" src="main.js"></script> -->
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <!-- <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-messaging.js"></script> -->
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+
+        $(function () {
+
+            const socket = io()
+            socket.nickname = ''
+
+            $('form').submit(function (evt) {
+
+                if (socket.nickname === '') {
+                    socket.nickname = $('#msg').val()
+                    socket.emit('login', socket.nickname)
+
+                    $('#msg').keypress(function (evt) {
+                        socket.emit('status', `${socket.nickname} está digitando...`)
+                    })
+
+                    $('#msg').keyup(function (evt) {
+                        socket.emit('status', '')
+                    })
+
+                    socket.on('status', function (msg) {
+                        $('#status').html('')
+                        $('#status').append(msg)
+                    })
+
+
+                } else {
+                    socket.emit('chat msg', $('#msg').val())
+                }
+
+                $('#msg').val('')
+
+                return false
+
+            })
+
+            socket.on('chat msg', function (msg) {
+                $('#mensagens').append($('<li>').text(msg))
+            })
+
+
+        })
+
+        // const socket = io()
+        // socket.nickname = ''
+
+
+        // document.querySelector('form').addEventListener('submit', (event) => {
+
+        //     let msg = document.querySelector('#msg')
+
+        //     if (socket.nickname === '') {
+        //         socket.nickname = msg.value
+        //         socket.emit('login', msg.value)
+        //     } else {
+        //         socket.emit('chat msg', msg.value)
+        //     }
+
+        //     msg.value = ''
+        //     return false
+        // })
+
+        // socket.on('chat msg', (msg) => {
+
+        //     let ul = document.querySelector('#mensagens')
+        //     let li = document.createElement('li')
+        //     li.classList.add('collection-item');
+        //     li.appendChild(document.createTextNode(msg));
+        //     ul.appendChild(li)
+
+        // })
+
+    </script>
+
+</body>
+
+</html>
